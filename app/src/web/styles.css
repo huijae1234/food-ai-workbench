@@ -180,7 +180,8 @@ textarea::placeholder { color: var(--muted); }
 .intro { max-width: 720px; margin-bottom: 24px; }
 .intro h2 { font-size: 24px; margin-bottom: 8px; }
 .intro p { color: var(--muted); }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 18px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 700px) { .grid { grid-template-columns: minmax(0, 1fr); } }
 
 .role-card {
   display: flex; flex-direction: column; gap: 0; padding: 22px; background: var(--surface);
@@ -473,3 +474,48 @@ input[type="text"]:hover, input[type="date"]:hover { border-color: var(--muted);
 .source-tag.live { background: var(--green-bg); color: var(--green); }
 
 .status.notice { display: block; padding: 10px 14px; border-radius: 10px; background: var(--brand-soft); color: var(--text-2); border: 1px solid var(--brand-line); }
+
+/* 직무 안내: 업무 목록은 번호 없이, 선택한 처리 사례에만 번호를 표시한다. */
+.role-question { font-weight: 700; color: var(--brand); margin-top: 8px; }
+.overview-tools { font-size: 13px; }
+.overview-tools summary { cursor: pointer; color: var(--brand); font-weight: 600; }
+.overview-tools .tool-list { margin-top: 10px; }
+.role-boundary, .scope-note { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.role-boundary { padding: 12px 16px; border-left: 3px solid var(--brand-line); background: var(--surface); }
+.source-note { margin: 14px 0; font-size: 13px; color: var(--muted); }
+.source-note summary { cursor: pointer; color: var(--brand); font-weight: 600; }
+.source-note p { margin: 8px 0; }
+.source-note a { color: var(--brand); overflow-wrap: anywhere; }
+.source-note ul { padding-left: 20px; }
+.area-choices { display: flex; gap: 8px; flex-wrap: wrap; }
+button.area-choice { flex: 1 1 190px; flex-direction: column; align-items: flex-start; text-align: left; padding: 14px; }
+.area-choice span { color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.5; }
+button.area-choice[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+.area-content { margin-top: 20px; }
+.area-heading { font-size: 16px; margin-bottom: 12px; }
+.work-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.work-group > h4 { font-size: 14px; }
+.work-group > .muted { font-size: 12px; margin: 5px 0 10px; }
+.task-list, .collaboration-list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.task-list li, .collaboration-list li { padding: 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); }
+.task-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.partner-tag { display: inline-block; padding: 2px 7px; color: var(--brand); background: var(--brand-soft); border-radius: 6px; font-size: 11px; }
+.task-list p, .collaboration-list p { font-size: 13px; color: var(--text-2); margin: 6px 0; }
+.task-list button, .step-btn button { align-self: flex-start; font-size: 12px; margin-top: 8px; padding: 7px 10px; }
+.empty-work { padding: 14px; font-size: 13px; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); }
+.scope-note { margin-top: 14px; }
+.scenario-picker { margin: 0 0 12px; }
+.scenario-picker select { width: 100%; min-width: 0; }
+.scenario-trigger { margin: 10px 0 14px; font-size: 14px; }
+.scenario-output { padding: 12px 14px; margin-top: 12px; background: var(--brand-soft); border-radius: var(--radius); font-size: 13px; }
+.collaboration-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.collaboration-list h4 { margin-top: 7px; }
+.tool-context { margin: 8px 0 16px; font-size: 13px; color: var(--muted); }
+.stepper .step-btn { min-width: 0; }
+@media (max-width: 700px) {
+  .work-groups, .collaboration-list { grid-template-columns: minmax(0, 1fr); }
+  .stepper { grid-template-columns: minmax(0, 1fr); }
+  .panel { padding: 18px 16px; }
+  .hero { flex-direction: column; align-items: stretch; }
+  .stats > div { min-width: 0; flex: 1; }
+}

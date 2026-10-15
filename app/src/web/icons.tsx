@@ -25,6 +25,12 @@ export const BrandMark = () => (
 );
 
 const ICONS: Record<RoleId, ReactNode> = {
+  planning: (
+    <>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M7 3v4M17 3v4M3 10h18M7 14h4M7 17h7" />
+    </>
+  ),
   // 공장·설비
   production: (
     <>

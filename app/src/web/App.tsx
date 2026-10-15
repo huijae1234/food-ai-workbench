@@ -4,6 +4,7 @@ import './styles.css';
 import { api } from './api';
 import { ArrowRight, BrandMark, RoleIcon } from './icons';
 import { ROLES, type Role, type RoleId, type ToolId } from './roles';
+import { RoleGuide, SourceNote } from './RoleGuide';
 import { ClaimTool } from './tools/ClaimTool';
 import { EquipmentTool } from './tools/EquipmentTool';
 import { HygieneTool } from './tools/HygieneTool';
@@ -94,7 +95,8 @@ function Overview({ onPick }: { onPick: (id: RoleId) => void }) {
     <>
       <section className="intro">
         <h2>직무를 고르면, 그 직무의 문제와 AI 도구만 남습니다</h2>
-        <p>생산기술 · 품질관리 · 품질보증의 업무를 나누어 보고, 반복되고 수작업이 많은 지점에 AI를 붙였습니다. 숫자 계산과 검증은 코드가, 해석과 초안은 AI가, 판단은 사람이 맡습니다.</p>
+        <p>생산관리 · 생산기술 · 품질관리 · 품질보증의 책임 범위와 협업 관계를 살펴보세요. 상시 업무와 상황별 처리 절차를 구분하고, 필요한 곳에서 기존 8개 보조 도구를 연결합니다.</p>
+        <SourceNote />
       </section>
       <div className="grid">
         {ROLES.map((r) => (
@@ -103,36 +105,36 @@ function Overview({ onPick }: { onPick: (id: RoleId) => void }) {
               <span className="icon-bubble"><RoleIcon id={r.id} size={22} /></span>
               <div>
                 <h3>{r.name}</h3>
-                <p className="muted">{r.where}</p>
               </div>
             </div>
+            <p className="role-question">{r.question}</p>
             <p className="role-mission">{r.mission}</p>
-            <h4 className="eyebrow">주요 업무</h4>
-            <ul className="pills">{r.flow.map((f) => <li key={f.name} className={f.tool ? 'pill ai' : 'pill'}>{f.name}</li>)}</ul>
-            <h4 className="eyebrow">AI 도구</h4>
-            <ul className="tool-list">
-              {r.tools.map((t) => (
-                <li key={t.id}><b>{t.name}</b><span>{t.desc}</span></li>
-              ))}
-            </ul>
-            <button className="primary block" onClick={() => onPick(r.id)}>{r.name}(으)로 좁히기 <ArrowRight /></button>
+            <h4 className="eyebrow">주요 업무 영역 · 순서 없음</h4>
+            <ul className="pills">{r.areas.map((a) => <li key={a.id} className="pill">{a.name}</li>)}</ul>
+            <details className="overview-tools">
+              <summary>{r.tools.length}개 연결 도구 보기 · 공통 도구 포함</summary>
+              <ul className="tool-list">
+                {r.tools.map((t) => (
+                  <li key={t.id}><b>{t.name}</b><span>{t.desc}</span></li>
+                ))}
+              </ul>
+            </details>
+            <button className="primary block" onClick={() => onPick(r.id)}>{r.name} 살펴보기 <ArrowRight /></button>
           </article>
         ))}
       </div>
     </>
   );
 }
-
 function RoleView({ role, onBack }: { role: Role; onBack: () => void }) {
   const [toolId, setToolId] = useState<ToolId>(role.tools[0]!.id);
   const active = role.tools.find((t) => t.id === toolId) ?? role.tools[0]!;
   const toolRef = useRef<HTMLDivElement>(null);
 
   const stats = [
-    { n: role.flow.length, label: '업무 단계' },
-    { n: role.flow.filter((f) => f.tool).length, label: 'AI가 돕는 단계' },
-    { n: role.problems.length, label: '개선 과제' },
-    { n: role.tools.length, label: 'AI 도구' },
+    { n: role.areas.length, label: '업무 영역' },
+    { n: role.scenarios.length, label: '상황별 사례' },
+    { n: role.tools.length, label: '연결 도구' },
   ];
 
   const openTool = (id: ToolId) => {
@@ -158,7 +160,7 @@ function RoleView({ role, onBack }: { role: Role; onBack: () => void }) {
           <span className="icon-bubble lg"><RoleIcon id={role.id} size={26} /></span>
           <div>
             <h2 className="role-title">{role.name}</h2>
-            <p className="muted">{role.where}</p>
+            <p className="role-question">{role.question}</p>
             <p className="hero-lead">{role.mission}</p>
           </div>
         </div>
@@ -169,29 +171,13 @@ function RoleView({ role, onBack }: { role: Role; onBack: () => void }) {
         </dl>
       </section>
 
-      <section className="panel" aria-labelledby="flow-h">
-        <header className="panel-head">
-          <h3 id="flow-h">업무 흐름</h3>
-          <span className="muted">AI 표시가 있는 단계를 누르면 해당 도구로 이동합니다</span>
-        </header>
-        <ol className="stepper">
-          {role.flow.map((f, i) => (
-            <li key={f.name} className={f.tool ? 'step has-tool' : 'step'}>
-              {f.tool ? (
-                <button className="step-btn" onClick={() => openTool(f.tool!)}>
-                  <StepBody i={i} f={f} />
-                </button>
-              ) : (
-                <div className="step-btn static"><StepBody i={i} f={f} /></div>
-              )}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <p className="role-boundary">{role.boundary}</p>
+      <SourceNote />
+      <RoleGuide role={role} onTool={openTool} />
 
       <section className="panel" aria-labelledby="prob-h">
         <header className="panel-head">
-          <h3 id="prob-h">문제 → AI 개선</h3>
+          <h3 id="prob-h">업무의 어려움과 도구가 돕는 범위</h3>
         </header>
         <div className="problems">
           {role.problems.map((p) => (
@@ -210,6 +196,8 @@ function RoleView({ role, onBack }: { role: Role; onBack: () => void }) {
       </section>
 
       <div ref={toolRef} className="tool-col">
+        <h3>업무 보조 도구</h3>
+        <p className="tool-context">{active.desc}</p>
         {role.tools.length > 1 && (
           <div className="utabs" role="tablist" aria-label="도구 선택">
             {role.tools.map((t) => (
@@ -229,19 +217,6 @@ function RoleView({ role, onBack }: { role: Role; onBack: () => void }) {
           );
         })}
       </div>
-    </>
-  );
-}
-
-function StepBody({ i, f }: { i: number; f: Role['flow'][number] }) {
-  return (
-    <>
-      <span className="step-top">
-        <span className="step-no">{i + 1}</span>
-        {f.tool && <em className="ai-badge">AI</em>}
-      </span>
-      <span className="step-name">{f.name}</span>
-      <span className="step-desc">{f.desc}</span>
     </>
   );
 }
